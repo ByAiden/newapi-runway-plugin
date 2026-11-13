@@ -1,0 +1,1310 @@
+{
+  "cases": [
+    {
+      "name": "gen4.5 text to video sends the mapped model and version header",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A fox in snow",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "video",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/text_to_video",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        },
+        "body": {
+          "promptText": "A fox in snow",
+          "ratio": "1280:720",
+          "duration": 5,
+          "model": "gen4.5"
+        },
+        "action": "text_to_video"
+      }
+    },
+    {
+      "name": "gen4.5 5s reserves 60 credits",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A fox in snow",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "credits": 60
+      }
+    },
+    {
+      "name": "gen4_turbo image to video",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "promptImage": "https://example.com/a.jpg",
+            "ratio": "960:960",
+            "duration": 10,
+            "model": "gen4_turbo"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "image_to_video",
+          "model": "gen4_turbo",
+          "upstreamModel": "gen4_turbo",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/image_to_video",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        },
+        "body": {
+          "promptImage": "https://example.com/a.jpg",
+          "ratio": "960:960",
+          "duration": 10,
+          "model": "gen4_turbo"
+        },
+        "action": "image_to_video"
+      }
+    },
+    {
+      "name": "gen4_turbo 10s reserves 50 credits",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "requestBody": {
+            "promptImage": "https://example.com/a.jpg",
+            "ratio": "960:960",
+            "duration": 10,
+            "model": "gen4_turbo"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "image_to_video",
+          "model": "gen4_turbo",
+          "upstreamModel": "gen4_turbo",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "credits": 50
+      }
+    },
+    {
+      "name": "aleph2 edit request",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "videoUri": "https://example.com/v.mp4",
+            "promptText": "make it snow",
+            "outputFormat": "prores",
+            "model": "aleph2"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "video_to_video",
+          "model": "aleph2",
+          "upstreamModel": "aleph2",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/video_to_video",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        },
+        "body": {
+          "videoUri": "https://example.com/v.mp4",
+          "promptText": "make it snow",
+          "outputFormat": "prores",
+          "model": "aleph2"
+        },
+        "action": "video_to_video"
+      }
+    },
+    {
+      "name": "aleph2 prores reserves 30 seconds",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "requestBody": {
+            "videoUri": "https://example.com/v.mp4",
+            "promptText": "make it snow",
+            "outputFormat": "prores",
+            "model": "aleph2"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "video_to_video",
+          "model": "aleph2",
+          "upstreamModel": "aleph2",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "credits": 990
+      }
+    },
+    {
+      "name": "act_two request",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "character": {
+              "type": "image",
+              "uri": "https://example.com/a.jpg"
+            },
+            "reference": {
+              "type": "video",
+              "uri": "https://example.com/v.mp4"
+            },
+            "model": "act_two"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "character_performance",
+          "model": "act_two",
+          "upstreamModel": "act_two",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/character_performance",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        },
+        "body": {
+          "character": {
+            "type": "image",
+            "uri": "https://example.com/a.jpg"
+          },
+          "reference": {
+            "type": "video",
+            "uri": "https://example.com/v.mp4"
+          },
+          "model": "act_two"
+        },
+        "action": "character_performance"
+      }
+    },
+    {
+      "name": "act_two reserves 30 seconds",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "requestBody": {
+            "character": {
+              "type": "image",
+              "uri": "https://example.com/a.jpg"
+            },
+            "reference": {
+              "type": "video",
+              "uri": "https://example.com/v.mp4"
+            },
+            "model": "act_two"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "character_performance",
+          "model": "act_two",
+          "upstreamModel": "act_two",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "credits": 150
+      }
+    },
+    {
+      "name": "gen4_image 720p request",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A cat",
+            "ratio": "1280:720",
+            "model": "gen4_image"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_image",
+          "model": "gen4_image",
+          "upstreamModel": "gen4_image",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/text_to_image",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        },
+        "body": {
+          "promptText": "A cat",
+          "ratio": "1280:720",
+          "model": "gen4_image"
+        },
+        "action": "text_to_image"
+      }
+    },
+    {
+      "name": "gen4_image 720p reserves 5 credits",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A cat",
+            "ratio": "1280:720",
+            "model": "gen4_image"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_image",
+          "model": "gen4_image",
+          "upstreamModel": "gen4_image",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "credits": 5
+      }
+    },
+    {
+      "name": "OpenAI video request becomes gen4.5 text to video",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A boat",
+            "ratio": "720:1280",
+            "duration": 6,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/text_to_video",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        },
+        "body": {
+          "promptText": "A boat",
+          "ratio": "720:1280",
+          "duration": 6,
+          "model": "gen4.5"
+        },
+        "action": "text_to_video"
+      }
+    },
+    {
+      "name": "an earlier task's output becomes the input video",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "videoUri": {
+              "task_id": "task_old"
+            },
+            "promptText": "add rain",
+            "model": "aleph2"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "video_to_video",
+          "model": "aleph2",
+          "upstreamModel": "aleph2",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public",
+          "originTasks": [
+            {
+              "taskId": "task_old",
+              "upstreamTaskId": "rw-old",
+              "action": "text_to_video",
+              "status": "SUCCESS",
+              "data": {
+                "id": "rw-old",
+                "status": "SUCCEEDED",
+                "output": [
+                  "https://cdn.example/old.mp4"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/video_to_video",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        },
+        "body": {
+          "videoUri": "https://cdn.example/old.mp4",
+          "promptText": "add rain",
+          "model": "aleph2"
+        },
+        "action": "video_to_video"
+      }
+    },
+    {
+      "name": "billing_ratios has no ratio",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A fox in snow",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public",
+          "usagePurpose": "billing_ratios"
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "gen4_turbo on text to video is rejected",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A fox in snow",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4_turbo",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expectedError": "gen4_turbo does not serve /v1/text_to_video"
+    },
+    {
+      "name": "a retired model is rejected",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A fox in snow",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4_aleph",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expectedError": "not a supported Runway model"
+    },
+    {
+      "name": "an undocumented field is rejected",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "model": "gen4.5",
+            "promptText": "x",
+            "audio": true
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expectedError": "audio is not supported"
+    },
+    {
+      "name": "a duration out of range is rejected",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "requestBody": {
+            "model": "gen4.5",
+            "promptText": "x",
+            "duration": 12
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expectedError": "from 2 to 10"
+    },
+    {
+      "name": "a runway:// upload URI is rejected",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestBody": {
+            "model": "gen4_turbo",
+            "promptImage": "runway://upload/1"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "image_to_video",
+          "model": "gen4_turbo",
+          "upstreamModel": "gen4_turbo",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        }
+      ],
+      "expectedError": "runway://"
+    },
+    {
+      "name": "submit keeps the task id",
+      "hook": "parseSubmitResponse",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A fox in snow",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        },
+        {
+          "statusCode": 200,
+          "headers": {},
+          "body": {
+            "id": "rw-1"
+          }
+        }
+      ],
+      "expected": {
+        "taskId": "rw-1",
+        "taskData": {
+          "id": "rw-1"
+        }
+      }
+    },
+    {
+      "name": "submit without id fails",
+      "hook": "parseSubmitResponse",
+      "args": [
+        {
+          "requestBody": {
+            "promptText": "A fox in snow",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": ""
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_public"
+        },
+        {
+          "statusCode": 200,
+          "headers": {},
+          "body": {}
+        }
+      ],
+      "expectedError": "did not return a task id"
+    },
+    {
+      "name": "query on GET /v1/tasks/{id}",
+      "hook": "buildQueryRequest",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        }
+      ],
+      "expected": {
+        "url": "https://api.dev.runwayml.com/v1/tasks/rw-1",
+        "method": "GET",
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer test-key",
+          "X-Runway-Version": "2024-11-06"
+        }
+      }
+    },
+    {
+      "name": "pending is queued",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {
+          "id": "rw-1",
+          "status": "PENDING",
+          "estimatedCost": {
+            "credits": 60
+          }
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "QUEUED"
+      }
+    },
+    {
+      "name": "throttled is queued",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {
+          "id": "rw-1",
+          "status": "THROTTLED"
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "QUEUED"
+      }
+    },
+    {
+      "name": "running reports progress",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {
+          "id": "rw-1",
+          "status": "RUNNING",
+          "progress": 0.25
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "IN_PROGRESS",
+        "progress": "25%"
+      }
+    },
+    {
+      "name": "succeeded",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {
+          "id": "rw-1",
+          "createdAt": "2026-11-12T00:00:00Z",
+          "status": "SUCCEEDED",
+          "output": [
+            "https://cdn.example/out.mp4"
+          ],
+          "cost": {
+            "credits": 60
+          }
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "SUCCESS",
+        "progress": "100%"
+      }
+    },
+    {
+      "name": "failed carries the failure code",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {
+          "id": "rw-1",
+          "status": "FAILED",
+          "failure": "Content moderated",
+          "failureCode": "SAFETY.INPUT.TEXT",
+          "cost": {
+            "credits": 0
+          }
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "Content moderated (SAFETY.INPUT.TEXT)"
+      }
+    },
+    {
+      "name": "cancelled fails",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {
+          "id": "rw-1",
+          "status": "CANCELLED",
+          "cost": {
+            "credits": 0
+          }
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "the task was cancelled or deleted on Runway"
+      }
+    },
+    {
+      "name": "unknown status is UNKNOWN",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {
+          "id": "rw-1",
+          "status": "TELEPORTING"
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "unrecognized status: TELEPORTING"
+      }
+    },
+    {
+      "name": "completion settles on cost.credits",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {},
+        {
+          "id": "rw-1",
+          "createdAt": "2026-11-12T00:00:00Z",
+          "status": "SUCCEEDED",
+          "output": [
+            "https://cdn.example/out.mp4"
+          ],
+          "cost": {
+            "credits": 60
+          }
+        }
+      ],
+      "expected": {
+        "credits": 60
+      }
+    },
+    {
+      "name": "zero cost keeps the reservation",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {},
+          "state": null
+        },
+        {},
+        {
+          "id": "rw-1",
+          "createdAt": "2026-11-12T00:00:00Z",
+          "status": "SUCCEEDED",
+          "output": [
+            "https://cdn.example/out.mp4"
+          ],
+          "cost": {
+            "credits": 0
+          }
+        }
+      ],
+      "expected": null
+    },
+    {
+      "name": "video artifact",
+      "hook": "listArtifacts",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "status": "SUCCESS",
+          "action": "text_to_video",
+          "data": {
+            "id": "rw-1",
+            "createdAt": "2026-11-12T00:00:00Z",
+            "status": "SUCCEEDED",
+            "output": [
+              "https://cdn.example/out.mp4"
+            ],
+            "cost": {
+              "credits": 60
+            }
+          }
+        }
+      ],
+      "expected": [
+        {
+          "key": "video",
+          "type": "video",
+          "mimeType": "video/mp4"
+        }
+      ]
+    },
+    {
+      "name": "PNG sequence and audio artifacts",
+      "hook": "listArtifacts",
+      "args": [
+        {
+          "taskId": "rw-2",
+          "status": "SUCCESS",
+          "action": "text_to_video",
+          "data": {
+            "status": "SUCCEEDED",
+            "output": [
+              "https://cdn.example/f.zip",
+              "https://cdn.example/a.wav"
+            ]
+          }
+        }
+      ],
+      "expected": [
+        {
+          "key": "video",
+          "type": "file",
+          "mimeType": "application/zip"
+        },
+        {
+          "key": "output-2",
+          "type": "audio",
+          "mimeType": "audio/wav"
+        }
+      ]
+    },
+    {
+      "name": "image artifact",
+      "hook": "listArtifacts",
+      "args": [
+        {
+          "taskId": "rw-3",
+          "status": "SUCCESS",
+          "action": "text_to_image",
+          "data": {
+            "status": "SUCCEEDED",
+            "output": [
+              "https://cdn.example/i.png"
+            ]
+          }
+        }
+      ],
+      "expected": [
+        {
+          "key": "image-1",
+          "type": "image",
+          "mimeType": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "download falls back to the polled URL",
+      "hook": "buildContentRequest",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {
+            "id": "rw-1",
+            "createdAt": "2026-11-12T00:00:00Z",
+            "status": "SUCCEEDED",
+            "output": [
+              "https://cdn.example/out.mp4"
+            ],
+            "cost": {
+              "credits": 60
+            }
+          },
+          "state": null,
+          "artifactKey": "video",
+          "upstreamTaskId": "rw-1",
+          "clientRequest": {
+            "method": "GET",
+            "headers": {}
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://cdn.example/out.mp4",
+        "method": "GET",
+        "credentialless": true
+      }
+    },
+    {
+      "name": "a missing artifact is not found",
+      "hook": "buildContentRequest",
+      "args": [
+        {
+          "taskId": "rw-1",
+          "publicTaskId": "task_public",
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "baseUrl": "https://api.dev.runwayml.com",
+          "apiKey": "test-key",
+          "authHeader": "Bearer test-key",
+          "upstream": {
+            "kind": "vendor"
+          },
+          "config": {},
+          "data": {
+            "id": "rw-1",
+            "createdAt": "2026-11-12T00:00:00Z",
+            "status": "SUCCEEDED",
+            "output": [
+              "https://cdn.example/out.mp4"
+            ],
+            "cost": {
+              "credits": 60
+            }
+          },
+          "state": null,
+          "artifactKey": "output-4",
+          "upstreamTaskId": "rw-1",
+          "clientRequest": {
+            "method": "GET",
+            "headers": {}
+          }
+        }
+      ],
+      "expectedError": "artifact_not_found"
+    }
+  ]
+}
