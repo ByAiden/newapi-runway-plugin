@@ -85,6 +85,16 @@ curl https://your-gateway.example.com/v1/videos \
   -d '{"model": "gen4.5", "prompt": "A paper boat drifting on a calm pond", "seconds": 5, "size": "1280x720"}'
 ```
 
+## 经由另一个 New API 网关
+
+适用于对外网关把 Runway 请求转发给另一台持有 Runway 密钥的 New API 网关的情况。
+
+- 两台网关都安装本插件的同一版本，第二台网关按上文设置渠道。
+- 在对外网关新建 New API（60）渠道：Base URL 填第二台网关地址，密钥填它的一个令牌，在「上游任务插件」中选择本插件，模型名与第二台网关一致。
+- 在对外网关用上文相同的表达式定价：提交时预留相同的积分，任务完成后按 Runway 实际扣除的积分结算，第二台网关的任务查询路由以 `cost.credits` 返回该值。第二台网关按它自己的价格向该令牌计费。
+- 插件调用第二台网关的 `/{key}/v1/text_to_video`、`/{key}/v1/image_to_video`、`/{key}/v1/video_to_video`、`/{key}/v1/character_performance`、`/{key}/v1/text_to_image` 和 `/{key}/runway/v1/tasks/{id}`。对先前任务的 `{"task_id"}` 引用会换成第二台网关的任务 id 传递。
+- 文件经第二台网关的 `/v1/tasks/{id}/artifacts/{key}/content` 下载，带该令牌。对外网关的 OpenAI 图片接口返回第二台网关的签名文件地址。
+
 ## 限制
 
 - `promptText` 最多 1000 个字符。Gen-4.5 必须填写提示词；Gen-4 Turbo 和 Aleph 2.0 可选（Aleph 需要提示词或关键帧之一）。

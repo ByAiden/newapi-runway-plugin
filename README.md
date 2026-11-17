@@ -86,6 +86,16 @@ curl https://your-gateway.example.com/v1/videos \
   -d '{"model": "gen4.5", "prompt": "A paper boat drifting on a calm pond", "seconds": 5, "size": "1280x720"}'
 ```
 
+## Through another New API gateway
+
+Use this when your public gateway forwards Runway requests to a second New API gateway that holds the Runway key.
+
+- Install this plugin, same version, on both gateways. On the second gateway set up the channel as described above.
+- On the public gateway create a New API (60) channel: Base URL is the second gateway's address, the key is one of its tokens, and pick this plugin under 上游任务插件 (upstream task plugins). List the same model names.
+- Set prices on the public gateway with the same expressions as above: the request reserves the same credits, and a finished task settles on the credits Runway charged, which the second gateway's task route returns as `cost.credits`. The second gateway charges its own prices to the token.
+- The plugin calls the second gateway's `/{key}/v1/text_to_video`, `/{key}/v1/image_to_video`, `/{key}/v1/video_to_video`, `/{key}/v1/character_performance`, `/{key}/v1/text_to_image` and `/{key}/runway/v1/tasks/{id}`. `{"task_id"}` references to earlier tasks are passed on as the second gateway's task ids.
+- Files download through the second gateway's `/v1/tasks/{id}/artifacts/{key}/content` with the token. The OpenAI Images API on the public gateway returns the second gateway's signed file addresses.
+
 ## Limits
 
 - `promptText` is at most 1000 characters. Gen-4.5 needs a prompt; Gen-4 Turbo and Aleph 2.0 take an optional one (Aleph needs a prompt or keyframes).

@@ -3,6 +3,7 @@
 // editing, Act-Two character performance, and Gen-4 Image / Gen-4 Image
 // Turbo. Every operation is a POST that returns a task id, polled at
 // GET /v1/tasks/{id}. Every request carries the X-Runway-Version header.
+const PLUGIN_KEY = "byaiden_runway";
 const RUNWAY_VERSION = "2024-11-06";
 const MODELS = ["gen4.5", "gen4_turbo", "aleph2", "act_two", "gen4_image", "gen4_image_turbo"];
 const VIDEO_MODELS = ["gen4.5", "gen4_turbo", "aleph2", "act_two"];
@@ -70,13 +71,17 @@ export const meta = {
     "en": "Runway Gen-4.5 and Gen-4 Turbo video, Aleph 2.0 video editing, Act-Two character performance, and Gen-4 Image generation",
     "zh": "Runway Gen-4.5 与 Gen-4 Turbo 视频生成、Aleph 2.0 视频编辑、Act-Two 角色表演迁移与 Gen-4 Image 图片生成"
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "ByAiden",
     "url": "https://github.com/ByAiden"
   },
   "website": "https://docs.dev.runwayml.com/",
   "baseUrl": "https://api.dev.runwayml.com",
+  "upstreams": [
+    "vendor",
+    "new_api"
+  ],
   "models": [
     "gen4.5",
     "gen4_turbo",
@@ -545,8 +550,24 @@ function outputURLs(data) {
   return object.output.map(trimmed);
 }
 
-function taskHeaders(apiKey) {
-  return { Accept: "application/json", Authorization: "Bearer " + apiKey, "X-Runway-Version": RUNWAY_VERSION };
+// On a New API channel the same plugin answers on another gateway, which
+// serves Runway's paths under the plugin key and takes its own token; the
+// query route is its /runway/v1/tasks/{id}.
+function viaGateway(ctx) {
+  return Boolean(ctx && ctx.upstream && ctx.upstream.kind === "new_api");
+}
+
+function apiRoot(ctx) {
+  return ctx.baseUrl + (viaGateway(ctx) ? "/" + PLUGIN_KEY : "");
+}
+
+function taskURL(ctx, id) {
+  return apiRoot(ctx) + (viaGateway(ctx) ? "/runway/v1/tasks/" : "/v1/tasks/") + encodeURIComponent(id);
+}
+
+function taskHeaders(ctx) {
+  if (viaGateway(ctx)) return { Accept: "application/json", Authorization: trimmed(ctx.authHeader) || "Bearer " + ctx.apiKey };
+  return { Accept: "application/json", Authorization: "Bearer " + ctx.apiKey, "X-Runway-Version": RUNWAY_VERSION };
 }
 
 // Replaces {task_id} references with the output URLs of the tasks the gateway
@@ -560,6 +581,8 @@ function withOriginURLs(body, ctx) {
   for (const task of ctx.originTasks || []) {
     if (task && task.taskId) tasks[task.taskId] = task;
   }
+  // The upstream gateway resolves references to its own tasks itself.
+  if (viaGateway(ctx)) return withUpstreamTaskIds(body, ids, tasks);
   const outputs = {};
   let lookups = 0;
   for (const id of ids) {
@@ -569,7 +592,7 @@ function withOriginURLs(body, ctx) {
     if (lookups < 4) {
       lookups++;
       try {
-        const response = utils.fetch({ url: ctx.baseUrl + "/v1/tasks/" + encodeURIComponent(trimmed(task.upstreamTaskId)), headers: taskHeaders(ctx.apiKey) });
+        const response = utils.fetch({ url: taskURL(ctx, trimmed(task.upstreamTaskId)), headers: taskHeaders(ctx) });
         if (response.status === 200) urls = outputURLs(response.body);
       } catch (_error) {
         urls = [];
@@ -588,6 +611,27 @@ function withOriginURLs(body, ctx) {
       if (!url) throw new Error("task " + object.task_id + " has no output " + (object.output_index || 0));
       return url;
     }
+    const out = {};
+    for (const key of Object.keys(object)) out[key] = swap(object[key]);
+    return out;
+  };
+  return swap(body);
+}
+
+// Replaces each {task_id} reference with the id the upstream gateway gave
+// that task.
+function withUpstreamTaskIds(body, ids, tasks) {
+  const upstream = {};
+  for (const id of ids) {
+    const task = tasks[id];
+    if (!task || !trimmed(task.upstreamTaskId)) throw new Error("task " + id + " is not available");
+    upstream[id] = trimmed(task.upstreamTaskId);
+  }
+  const swap = function (value) {
+    if (Array.isArray(value)) return value.map(swap);
+    const object = plainObject(value);
+    if (!object || isPlaceholder(value)) return value;
+    if (typeof object.task_id === "string") return Object.assign({}, object, { task_id: upstream[object.task_id] });
     const out = {};
     for (const key of Object.keys(object)) out[key] = swap(object[key]);
     return out;
@@ -682,6 +726,9 @@ function publicTask(data, task, artifacts) {
   for (const key of ["createdAt", "status", "progress", "failure", "failureCode"]) {
     if (object[key] !== undefined) out[key] = object[key];
   }
+  // The credits Runway charged, which a gateway in front of this one settles on.
+  const cost = plainObject(object.cost);
+  if (cost && Number(cost.credits) > 0 && Number.isFinite(Number(cost.credits))) out.cost = { credits: Number(cost.credits) };
   if (Array.isArray(object.output)) {
     const links = artifacts || {};
     out.output = object.output.map(function (url, index) {
@@ -740,9 +787,9 @@ export function buildSubmitRequest(ctx) {
   const body = withOriginURLs(runwayRequest(source, model, operation), ctx);
   body.model = model;
   return {
-    url: ctx.baseUrl + OPERATIONS[operation].path,
+    url: apiRoot(ctx) + OPERATIONS[operation].path,
     method: "POST",
-    headers: Object.assign({ "Content-Type": "application/json" }, taskHeaders(ctx.apiKey)),
+    headers: Object.assign({ "Content-Type": "application/json" }, taskHeaders(ctx)),
     body: body,
     action: operation,
   };
@@ -751,7 +798,7 @@ export function buildSubmitRequest(ctx) {
 export function parseSubmitResponse(ctx, resp) {
   const body = plainObject(resp.body);
   const id = body ? trimmed(body.id) : "";
-  if (!id) throw new Error("Runway did not return a task id");
+  if (!id) throw new Error(viaGateway(ctx) ? "the upstream gateway did not return a task id" : "Runway did not return a task id");
   return { taskId: id, taskData: body };
 }
 
@@ -767,9 +814,9 @@ export function extractUsage(ctx) {
 
 export function buildQueryRequest(ctx) {
   return {
-    url: ctx.baseUrl + "/v1/tasks/" + encodeURIComponent(ctx.taskId),
+    url: taskURL(ctx, ctx.taskId),
     method: "GET",
-    headers: taskHeaders(ctx.apiKey),
+    headers: taskHeaders(ctx),
   };
 }
 
@@ -817,10 +864,21 @@ function artifactURL(data, key) {
 // Runway's output URLs expire, so a download asks Runway for fresh ones first
 // and falls back to the URL from the last poll.
 export function buildContentRequest(ctx) {
+  // Through another gateway the file comes from that gateway's task content
+  // route, with its token.
+  if (viaGateway(ctx)) {
+    const id = trimmed(ctx.upstreamTaskId);
+    if (!id || artifactIndex(ctx.artifactKey) < 0) throw new Error("artifact_not_found");
+    return {
+      url: ctx.baseUrl + "/v1/tasks/" + encodeURIComponent(id) + "/artifacts/" + encodeURIComponent(trimmed(ctx.artifactKey)) + "/content",
+      method: ctx.clientRequest.method,
+      headers: { Authorization: taskHeaders(ctx).Authorization },
+    };
+  }
   let url = "";
   if (trimmed(ctx.upstreamTaskId)) {
     try {
-      const response = utils.fetch({ url: ctx.baseUrl + "/v1/tasks/" + encodeURIComponent(ctx.upstreamTaskId), headers: taskHeaders(ctx.apiKey) });
+      const response = utils.fetch({ url: taskURL(ctx, ctx.upstreamTaskId), headers: taskHeaders(ctx) });
       if (response.status === 200) url = artifactURL(response.body, ctx.artifactKey);
     } catch (_error) {
       url = "";

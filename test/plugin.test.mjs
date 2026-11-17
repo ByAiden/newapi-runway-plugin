@@ -54,7 +54,7 @@ test("manifest follows the community rules", () => {
   assert.equal(meta.apiVersion, 1);
   assert.match(meta.key, /^[a-z0-9]+_runway$/);
   assert.ok(meta.key.length <= 30);
-  assert.equal(meta.version, "1.0.0");
+  assert.match(meta.version, /^\d+\.\d+\.\d+$/);
   assert.equal(meta.baseUrl, BASE);
   assert.equal(meta.channelTypes, undefined);
   assert.equal(meta.author.url, "https://github.com/" + meta.author.name);
@@ -250,7 +250,7 @@ test("artifacts, downloads and the native presenters", () => {
 
   assert.deepEqual(native.taskCreated({}, { task_id: "task_pub", data: { id: "rw-1" } }), { id: "task_pub" });
   const shown = native.taskStatus({ artifacts: { video: { key: "video", type: "video", url: "https://gw.example/content/1" } } }, { task_id: "task_pub", status: "SUCCESS", data: DONE });
-  assert.deepEqual(shown, { id: "task_pub", createdAt: DONE.createdAt, status: "SUCCEEDED", output: ["https://gw.example/content/1"] });
+  assert.deepEqual(shown, { id: "task_pub", createdAt: DONE.createdAt, status: "SUCCEEDED", cost: { credits: 60 }, output: ["https://gw.example/content/1"] });
   const imageShown = native.taskStatus({ artifacts: { "image-1": { url: "https://gw.example/content/2" } } }, { task_id: "task_pub", status: "SUCCESS", data: image });
   assert.deepEqual(imageShown.output, ["https://gw.example/content/2"]);
   const failed = native.taskStatus({ artifacts: {} }, { task_id: "task_pub", status: "FAILURE", fail_reason: "poll timeout", data: { id: "rw-1", status: "RUNNING", progress: 0.5 } });

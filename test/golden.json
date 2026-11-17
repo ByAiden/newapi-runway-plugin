@@ -1305,6 +1305,261 @@
         }
       ],
       "expectedError": "artifact_not_found"
+    },
+    {
+      "name": "New API: text to video goes to the gateway route without X-Runway-Version",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestHeaders": {},
+          "baseUrl": "https://middle.example.com",
+          "apiKey": "sk-middle",
+          "authHeader": "Bearer sk-middle",
+          "upstream": {
+            "kind": "new_api"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_outer",
+          "requestBody": {
+            "promptText": "a dog",
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5"
+        }
+      ],
+      "expected": {
+        "url": "https://middle.example.com/byaiden_runway/v1/text_to_video",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer sk-middle"
+        },
+        "body": {
+          "promptText": "a dog",
+          "ratio": "1280:720",
+          "duration": 5,
+          "model": "gen4.5"
+        },
+        "action": "text_to_video"
+      }
+    },
+    {
+      "name": "New API: task references become the gateway task ids",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "requestHeaders": {},
+          "baseUrl": "https://middle.example.com",
+          "apiKey": "sk-middle",
+          "authHeader": "Bearer sk-middle",
+          "upstream": {
+            "kind": "new_api"
+          },
+          "config": {},
+          "files": [],
+          "publicTaskId": "task_outer",
+          "requestBody": {
+            "promptText": "move",
+            "promptImage": {
+              "task_id": "task_outer_img"
+            },
+            "ratio": "1280:720",
+            "duration": 5,
+            "model": "gen4.5"
+          },
+          "action": "image_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5",
+          "originTasks": [
+            {
+              "taskId": "task_outer_img",
+              "upstreamTaskId": "task_middle_img",
+              "action": "text_to_image",
+              "data": {
+                "status": "SUCCEEDED",
+                "output": [
+                  "https://middle.example.com/v1/tasks/task_middle/artifacts/image-1/content?access=sig"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "expected": {
+        "url": "https://middle.example.com/byaiden_runway/v1/image_to_video",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer sk-middle"
+        },
+        "body": {
+          "promptText": "move",
+          "promptImage": {
+            "task_id": "task_middle_img"
+          },
+          "ratio": "1280:720",
+          "duration": 5,
+          "model": "gen4.5"
+        },
+        "action": "image_to_video"
+      }
+    },
+    {
+      "name": "New API: polling uses the gateway /runway/v1/tasks route",
+      "hook": "buildQueryRequest",
+      "args": [
+        {
+          "taskId": "task_middle",
+          "publicTaskId": "task_outer",
+          "baseUrl": "https://middle.example.com",
+          "apiKey": "sk-middle",
+          "authHeader": "Bearer sk-middle",
+          "upstream": {
+            "kind": "new_api"
+          },
+          "config": {},
+          "data": null,
+          "state": null,
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5"
+        }
+      ],
+      "expected": {
+        "url": "https://middle.example.com/byaiden_runway/runway/v1/tasks/task_middle",
+        "method": "GET",
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer sk-middle"
+        }
+      }
+    },
+    {
+      "name": "New API: the gateway task presenter succeeds",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "taskId": "task_middle",
+          "publicTaskId": "task_outer",
+          "baseUrl": "https://middle.example.com",
+          "apiKey": "sk-middle",
+          "authHeader": "Bearer sk-middle",
+          "upstream": {
+            "kind": "new_api"
+          },
+          "config": {},
+          "data": null,
+          "state": null,
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5"
+        },
+        {
+          "id": "task_middle",
+          "status": "SUCCEEDED",
+          "output": [
+            "https://middle.example.com/v1/tasks/task_middle/artifacts/video/content?access=sig"
+          ],
+          "cost": {
+            "credits": 48
+          }
+        },
+        {
+          "status": 200,
+          "headers": {}
+        }
+      ],
+      "expected": {
+        "status": "SUCCESS",
+        "progress": "100%"
+      }
+    },
+    {
+      "name": "New API: settlement reads cost.credits from the gateway",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "taskId": "task_middle",
+          "publicTaskId": "task_outer",
+          "baseUrl": "https://middle.example.com",
+          "apiKey": "sk-middle",
+          "authHeader": "Bearer sk-middle",
+          "upstream": {
+            "kind": "new_api"
+          },
+          "config": {},
+          "data": null,
+          "state": null,
+          "action": "text_to_video",
+          "model": "gen4.5",
+          "upstreamModel": "gen4.5"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "id": "task_middle",
+          "status": "SUCCEEDED",
+          "output": [
+            "https://middle.example.com/v1/tasks/task_middle/artifacts/video/content?access=sig"
+          ],
+          "cost": {
+            "credits": 48
+          }
+        }
+      ],
+      "expected": {
+        "credits": 48
+      }
+    },
+    {
+      "name": "New API: downloads use the gateway task content route",
+      "hook": "buildContentRequest",
+      "args": [
+        {
+          "taskId": "task_middle",
+          "publicTaskId": "task_outer",
+          "baseUrl": "https://middle.example.com",
+          "apiKey": "sk-middle",
+          "authHeader": "Bearer sk-middle",
+          "upstream": {
+            "kind": "new_api"
+          },
+          "config": {},
+          "data": {
+            "id": "task_middle",
+            "status": "SUCCEEDED",
+            "output": [
+              "https://middle.example.com/v1/tasks/task_middle/artifacts/video/content?access=sig"
+            ],
+            "cost": {
+              "credits": 48
+            }
+          },
+          "state": null,
+          "upstreamTaskId": "task_middle",
+          "clientRequest": {
+            "method": "GET",
+            "headers": {}
+          },
+          "action": "text_to_video",
+          "artifactKey": "video"
+        }
+      ],
+      "expected": {
+        "url": "https://middle.example.com/v1/tasks/task_middle/artifacts/video/content",
+        "method": "GET",
+        "headers": {
+          "Authorization": "Bearer sk-middle"
+        }
+      }
     }
   ]
 }
