@@ -71,7 +71,7 @@ export const meta = {
     "en": "Runway Gen-4.5 and Gen-4 Turbo video, Aleph 2.0 video editing, Act-Two character performance, and Gen-4 Image generation",
     "zh": "Runway Gen-4.5 与 Gen-4 Turbo 视频生成、Aleph 2.0 视频编辑、Act-Two 角色表演迁移与 Gen-4 Image 图片生成"
   },
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": {
     "name": "ByAiden",
     "url": "https://github.com/ByAiden"

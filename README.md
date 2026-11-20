@@ -48,7 +48,7 @@ The price table has one field, "Runway credit unit price". Each task is charged 
 - Gen-4 Image is 5 credits for a 720p `ratio` (`1280:720`, `720:1280`, `720:720`, `960:720`, `720:960`, `1680:720`) and 8 credits for every other ratio; a request without `ratio` is sent as `1920:1080`. Gen-4 Image Turbo is 2 credits per image.
 - Failed tasks are refunded in full by the gateway. Runway itself charges content-moderation failures like successful generations, so repeated moderated requests cost the channel owner credits that callers do not pay.
 
-Recommended task expressions at Runway's list price, per model (multiply by your margin `M`, for example `* 1.2`):
+Recommended task expressions at Runway's list price, per model (to add a margin, multiply each unit price inside the expression, for example `0.01` becomes `0.012` at 1.2x; appending `* 1.2` to the whole expression still bills correctly but the model page can no longer show it as a price table):
 
 | Model | Expression |
 | --- | --- |
